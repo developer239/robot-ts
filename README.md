@@ -12,6 +12,12 @@ devices such as keyboard, mouse, and screen for Node.js applications.
 In case of Linux, please, create issue and leave a star and I will implement support. Right now I want to focus on port to
 Node.js using Node-API.
 
+### Known issues:
+
+- Work in progress. If you need specific features, please, create an issue and I will prioritize it.
+- I never tested this on Windows. 🙏
+- It seems that special keys bindings are not implemented correctly.
+
 ## Installation:
 
 Make sure that you can build C++ projects on your machine and that you have [CMake](https://cmake.org) installed.
@@ -25,4 +31,3 @@ Install Node dependencies:
 yarn install
 ```
 
-... TODO ...

@@ -12,6 +12,10 @@ add_library(${PROJECT_NAME} SHARED
   src/main.cpp
   src/MouseBinding.h
   src/MouseBinding.cpp
+  src/KeyboardBinding.h
+  src/KeyboardBinding.cpp
+  src/ScreenBinding.h
+  src/ScreenBinding.cpp
   ${CMAKE_JS_SRC}
 )
 

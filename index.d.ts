@@ -18,15 +18,15 @@ declare module Robot {
   }
 
   export class Keyboard {
-    static Type(query: string): void;
+    static type(query: string): void;
 
-    static TypeHumanLike(query: string): void;
+    static typeHumanLike(query: string): void;
 
-    static Click(asciiChar: string | SpecialKey): void;
+    static click(asciiChar: string | SpecialKey): void;
 
-    static Press(asciiChar: string | SpecialKey): void;
+    static press(asciiChar: string | SpecialKey): void;
 
-    static Release(asciiChar: string | SpecialKey): void;
+    static release(asciiChar: string | SpecialKey): void;
   }
 
   export enum MouseButton {
@@ -43,19 +43,19 @@ declare module Robot {
   export class Mouse {
     static delay: number;
 
-    static Move(point: Point): void;
+    static move(point: Point): void;
 
-    static MoveSmooth(point: Point, speed?: number): void;
+    static moveSmooth(point: Point, speed?: number): void;
 
-    static Drag(point: Point, speed?: number): void;
+    static drag(point: Point, speed?: number): void;
 
-    static GetPosition(): Point;
+    static getPosition(): Point;
 
-    static ToggleButton(down: boolean, button: MouseButton, doubleClick?: boolean): void;
+    static toggleButton(down: boolean, button: MouseButton, doubleClick?: boolean): void;
 
-    static Click(button: MouseButton): void;
+    static click(button: MouseButton): void;
 
-    static DoubleClick(button: MouseButton): void;
+    static doubleClick(button: MouseButton): void;
 
     static ScrollBy(y: number, x?: number): void;
   }
@@ -74,13 +74,13 @@ declare module Robot {
   export class Screen {
     constructor();
 
-    GetPixelColor(x: number, y: number): Pixel;
+    getPixelColor(x: number, y: number): Pixel;
 
-    GetScreenSize(): DisplaySize;
+    getScreenSize(): DisplaySize;
 
-    Capture(x?: number, y?: number, width?: number, height?: number): void;
+    capture(x?: number, y?: number, width?: number, height?: number): void;
 
-    GetPixels(): Pixel[];
+    getPixels(): Pixel[];
 
     saveAsPNG(filename: string): void;
   }

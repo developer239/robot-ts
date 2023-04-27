@@ -1,11 +1,12 @@
-#include <napi.h>
 #include "Mouse.h"
+#include <napi.h>
 
-Napi::Value Move(const Napi::CallbackInfo& info) {
+Napi::Value Move(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (info.Length() != 1 || !info[0].IsObject()) {
-    Napi::TypeError::New(env, "Expected an object with x and y properties").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Expected an object with x and y properties")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
@@ -18,11 +19,12 @@ Napi::Value Move(const Napi::CallbackInfo& info) {
   return env.Null();
 }
 
-Napi::Value MoveSmooth(const Napi::CallbackInfo& info) {
+Napi::Value MoveSmooth(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (info.Length() < 1 || !info[0].IsObject()) {
-    Napi::TypeError::New(env, "Expected an object with x and y properties").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Expected an object with x and y properties")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
@@ -40,11 +42,12 @@ Napi::Value MoveSmooth(const Napi::CallbackInfo& info) {
   return env.Null();
 }
 
-Napi::Value Drag(const Napi::CallbackInfo& info) {
+Napi::Value Drag(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (info.Length() < 1 || !info[0].IsObject()) {
-    Napi::TypeError::New(env, "Expected an object with x and y properties").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Expected an object with x and y properties")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
@@ -62,7 +65,7 @@ Napi::Value Drag(const Napi::CallbackInfo& info) {
   return env.Null();
 }
 
-Napi::Value GetPosition(const Napi::CallbackInfo& info) {
+Napi::Object GetPosition(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   Robot::Point point = Robot::Mouse::GetPosition();
@@ -74,16 +77,18 @@ Napi::Value GetPosition(const Napi::CallbackInfo& info) {
   return result;
 }
 
-Napi::Value ToggleButton(const Napi::CallbackInfo& info) {
+Napi::Value ToggleButton(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (info.Length() < 2 || !info[0].IsBoolean() || !info[1].IsNumber()) {
-    Napi::TypeError::New(env, "Expected a boolean and a MouseButton").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Expected a boolean and a MouseButton")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
   bool down = info[0].As<Napi::Boolean>().Value();
-  Robot::MouseButton button = static_cast<Robot::MouseButton>(info[1].As<Napi::Number>().Uint32Value());
+  Robot::MouseButton button =
+      static_cast<Robot::MouseButton>(info[1].As<Napi::Number>().Uint32Value());
   bool doubleClick = false;
 
   if (info.Length() >= 3 && info[2].IsBoolean()) {
@@ -95,41 +100,46 @@ Napi::Value ToggleButton(const Napi::CallbackInfo& info) {
   return env.Null();
 }
 
-Napi::Value Click(const Napi::CallbackInfo& info) {
+Napi::Value Click(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (info.Length() != 1 || !info[0].IsNumber()) {
-    Napi::TypeError::New(env, "Expected a MouseButton").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Expected a MouseButton")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
-  Robot::MouseButton button = static_cast<Robot::MouseButton>(info[0].As<Napi::Number>().Uint32Value());
+  Robot::MouseButton button =
+      static_cast<Robot::MouseButton>(info[0].As<Napi::Number>().Uint32Value());
 
   Robot::Mouse::Click(button);
 
   return env.Null();
 }
 
-Napi::Value DoubleClick(const Napi::CallbackInfo& info) {
+Napi::Value DoubleClick(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (info.Length() != 1 || !info[0].IsNumber()) {
-    Napi::TypeError::New(env, "Expected a MouseButton").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Expected a MouseButton")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
-  Robot::MouseButton button = static_cast<Robot::MouseButton>(info[0].As<Napi::Number>().Uint32Value());
+  Robot::MouseButton button =
+      static_cast<Robot::MouseButton>(info[0].As<Napi::Number>().Uint32Value());
 
   Robot::Mouse::DoubleClick(button);
 
   return env.Null();
 }
 
-Napi::Value ScrollBy(const Napi::CallbackInfo& info) {
+Napi::Value ScrollBy(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
   if (info.Length() < 1 || !info[0].IsNumber()) {
-    Napi::TypeError::New(env, "Expected a number for y").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "Expected a number for y")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
@@ -160,9 +170,8 @@ Napi::Object InitMouse(Napi::Env env) {
   Napi::Object mouseButton = Napi::Object::New(env);
   mouseButton.Set("LEFT_BUTTON", Napi::Number::New(env, static_cast<int>(Robot::MouseButton::LEFT_BUTTON)));
   mouseButton.Set("RIGHT_BUTTON", Napi::Number::New(env, static_cast<int>(Robot::MouseButton::RIGHT_BUTTON)));
-  mouseButton.Set("CENTER_BUTTON", Napi::Number::New(env, static_cast<int>(Robot::MouseButton::CENTER_BUTTON)));
+  mouseButton.Set("CENTER_BUTTON",Napi::Number::New(env, static_cast<int>(Robot::MouseButton::CENTER_BUTTON)));
   mouse.Set("MouseButton", mouseButton);
 
   return mouse;
 }
-
