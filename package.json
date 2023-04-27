@@ -1,0 +1,43 @@
+{
+  "name": "robot-ts",
+  "version": "0.0.1",
+  "description": "Native mouse, keyboard and display controls for your Node application.",
+  "repository": "https://github.com/developer239/robot-ts",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "bindings": "1.5.0",
+    "node-addon-api": "6.1.0"
+  },
+  "scripts": {
+    "install": "cmake-js compile -d cpp print-configure",
+    "build": "cmake-js compile -d cpp print-configure"
+  },
+  "keywords": [
+    "node",
+    "mouse",
+    "keyboard",
+    "c++",
+    "cpp",
+    "node-addon-api",
+    "cmake",
+    "cmake-js",
+    "display"
+  ],
+  "devDependencies": {
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/commit-analyzer": "9.0.2",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/npm": "10.0.3",
+    "@semantic-release/release-notes-generator": "10.0.3",
+    "cmake-js": "7.2.1",
+    "semantic-release": "21.0.1"
+  }
+}
