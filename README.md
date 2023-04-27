@@ -1,5 +1,7 @@
 # Robot TS
 
+[![npm version](http://img.shields.io/npm/v/robot-ts.svg?style=flat)](https://www.npmjs.com/package/robot-ts "View this project on npm")
+
 This library is inspired by older unmaintained libraries like [octalmage/robotjs](https://github.com/octalmage/robotjs)
 and [Robot/robot-js](https://github.com/Robot/robot-js). The goal is to provide cross-platform controls for various
 devices such as keyboard, mouse, and screen for Node.js applications.
