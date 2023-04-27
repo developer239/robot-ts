@@ -10,6 +10,8 @@ include_directories(${CMAKE_JS_INC})
 # Define the Node.js addon target
 add_library(${PROJECT_NAME} SHARED
   src/main.cpp
+  src/MouseBinding.h
+  src/MouseBinding.cpp
   ${CMAKE_JS_SRC}
 )
 
