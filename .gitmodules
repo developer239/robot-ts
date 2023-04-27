@@ -1,0 +1,3 @@
+[submodule "cpp/externals/robot-cpp"]
+	path = cpp/externals/robot-cpp
+	url = https://github.com/developer239/robot-cpp
