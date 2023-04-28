@@ -1,4 +1,4 @@
-# Robot TS
+# Robot TS 🤖
 
 [![npm version](http://img.shields.io/npm/v/robot-ts.svg?style=flat)](https://www.npmjs.com/package/robot-ts "View this project on npm")
 
@@ -6,12 +6,14 @@ This library is inspired by older unmaintained libraries like [octalmage/robotjs
 and [Robot/robot-js](https://github.com/Robot/robot-js). The goal is to provide cross-platform controls for various
 devices such as keyboard, mouse, and screen for Node.js applications.
 
+You can find C++ implementation CMake static library 📚 [here: developer239/robot-cpp](https://github.com/developer239/robot-cpp)
+
 **Supported system:**
 
 - MacOS
 - Windows **(not tested yet)**
 
-In case of Linux, please, create issue and leave a star and I will implement support. Right now I want to focus on port to
+In case of Linux, please, create issue and leave a star ⭐ and I will implement support. Right now I want to focus on port to
 Node.js using Node-API.
 
 ### Known issues:
@@ -34,7 +36,7 @@ Install Node dependencies:
 yarn add robot-ts
 ```
 
-## Mouse
+## Mouse 🖱️
 
 The `Mouse` class provides a static interface for controlling the mouse cursor, simulating mouse clicks, and scrolling.
 
@@ -72,7 +74,7 @@ import { Mouse, Point } from "./bindings";
 Mouse.moveSmooth(new Point(100, 200));
 ```
 
-## Keyboard
+## Keyboard ⌨️
 
 The `Keyboard` class provides a static interface for simulating keyboard key presses, releases, and typing.
 
@@ -110,7 +112,7 @@ import { Keyboard } from "./bindings";
 Keyboard.typeHumanLike("hello, world");
 ```
 
-## Screen
+## Screen 🖥️
 
 The `Screen` class provides functionality to capture the screen, get pixel colors, and save the captured screen as a PNG image.
 
