@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/developer239/robot-ts/compare/v1.0.0...v1.0.1) (2023-04-28)
+
+
+### Bug Fixes
+
+* npm package ([881893b](https://github.com/developer239/robot-ts/commit/881893bb9d7890c911f95ec32eedb7daf4f224e5))
+
 # 1.0.0 (2023-04-28)
 
 
