@@ -1,6 +1,6 @@
 {
   "name": "robot-ts",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Native mouse, keyboard and display controls for your Node application.",
   "repository": "https://github.com/developer239/robot-ts",
   "main": "index.js",
