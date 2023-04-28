@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/developer239/robot-ts/compare/v1.0.1...v1.0.2) (2023-04-28)
+
+
+### Bug Fixes
+
+* remove namespace ([865e88c](https://github.com/developer239/robot-ts/commit/865e88ca5754949ca614bf9d4f67f958f611d6cb))
+
 ## [1.0.1](https://github.com/developer239/robot-ts/compare/v1.0.0...v1.0.1) (2023-04-28)
 
 
