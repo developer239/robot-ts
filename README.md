@@ -31,7 +31,7 @@ Make sure that you can build C++ projects on your machine and that you have [CMa
 Install Node dependencies:
 
 ```shell
-yarn install robot-ts
+yarn add robot-ts
 ```
 
 ## Mouse

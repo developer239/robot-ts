@@ -13,7 +13,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "node-addon-api": "6.1.0"
+    "node-addon-api": "6.1.0",
+    "cmake-js": "7.2.1"
   },
   "scripts": {
     "install": "cmake-js compile -d cpp print-configure",
@@ -36,7 +37,6 @@
     "@semantic-release/git": "10.0.1",
     "@semantic-release/npm": "10.0.3",
     "@semantic-release/release-notes-generator": "10.0.3",
-    "cmake-js": "7.2.1",
     "semantic-release": "21.0.1"
   }
 }
