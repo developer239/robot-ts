@@ -1,3 +1,4 @@
-[submodule "cpp/externals/robot-cpp"]
-	path = cpp/externals/robot-cpp
+[submodule "native/vendor/robot-cpp"]
+	path = native/vendor/robot-cpp
 	url = https://github.com/developer239/robot-cpp
+	branch = master

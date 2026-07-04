@@ -1,42 +1,81 @@
 {
   "name": "robot-ts",
   "version": "1.0.2",
-  "description": "Native mouse, keyboard and display controls for your Node application.",
-  "repository": "https://github.com/developer239/robot-ts",
-  "main": "index.js",
-  "typings": "index.d.ts",
-  "private": false,
-  "publishConfig": {
-    "access": "public"
+  "description": "Cross-platform keyboard, mouse, and screen automation for Node.js, with a physical-key vs text model, per-monitor DPI-aware capture, and explicit capability reporting.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/developer239/robot-ts.git"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.17.0"
   },
-  "dependencies": {
-    "node-addon-api": "6.1.0",
-    "cmake-js": "7.2.1"
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
+  "files": [
+    "dist/",
+    "native/src/",
+    "native/CMakeLists.txt",
+    "native/vendor/robot-cpp/CMakeLists.txt",
+    "native/vendor/robot-cpp/include/",
+    "native/vendor/robot-cpp/src/",
+    "native/vendor/robot-cpp/cmake/",
+    "native/vendor/robot-cpp/externals/lodepng/",
+    "prebuilds/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "install": "cmake-js compile -d cpp print-configure",
-    "build": "cmake-js compile -d cpp print-configure"
+    "build:native": "cmake-js compile --directory native --out native/build --config Release",
+    "build:native:debug": "cmake-js compile --directory native --out native/build --config Debug",
+    "build:ts": "tsc --project tsconfig.build.json",
+    "build": "npm run build:native && npm run build:ts",
+    "clean": "cmake-js clean --directory native --out native/build && rimraf dist",
+    "rebuild": "npm run clean && npm run build",
+    "prepack": "npm run build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+    "test": "vitest run --dir test/unit",
+    "test:watch": "vitest --dir test/unit",
+    "test:interactive": "vitest run --dir test/interactive"
   },
   "keywords": [
-    "node",
-    "mouse",
+    "automation",
     "keyboard",
-    "c++",
-    "cpp",
+    "mouse",
+    "screen",
+    "input",
+    "robot",
+    "robotjs",
+    "napi",
     "node-addon-api",
-    "cmake",
-    "cmake-js",
-    "display"
+    "cross-platform",
+    "screen-capture",
+    "cmake-js"
   ],
+  "dependencies": {
+    "cmake-js": "7.3.0",
+    "node-addon-api": "8.3.0"
+  },
   "devDependencies": {
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "9.0.2",
     "@semantic-release/git": "10.0.1",
     "@semantic-release/npm": "10.0.3",
     "@semantic-release/release-notes-generator": "10.0.3",
-    "semantic-release": "21.0.1"
+    "@types/node": "22.10.2",
+    "@typescript-eslint/eslint-plugin": "8.18.0",
+    "@typescript-eslint/parser": "8.18.0",
+    "eslint": "9.17.0",
+    "rimraf": "6.0.1",
+    "semantic-release": "21.0.1",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
   }
 }

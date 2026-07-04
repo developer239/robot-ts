@@ -1,146 +1,221 @@
-# Robot TS 🤖
+# robot-ts
 
-[![npm version](http://img.shields.io/npm/v/robot-ts.svg?style=flat)](https://www.npmjs.com/package/robot-ts "View this project on npm")
+[![npm version](https://img.shields.io/npm/v/robot-ts.svg?style=flat)](https://www.npmjs.com/package/robot-ts)
+[![CI](https://github.com/developer239/robot-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/developer239/robot-ts/actions/workflows/ci.yml)
 
-This library is inspired by older unmaintained libraries like [octalmage/robotjs](https://github.com/octalmage/robotjs)
-and [Robot/robot-js](https://github.com/Robot/robot-js). The goal is to provide cross-platform controls for various
-devices such as keyboard, mouse, and screen for Node.js applications.
+robot-ts is a Node.js library for programmatic keyboard, mouse, and screen control on macOS, Windows, and Linux. It is a typed async binding over [robot-cpp](https://github.com/developer239/robot-cpp) with input injection, native-resolution screen capture, global input recording, explicit capabilities, and typed errors.
 
-You can find C++ implementation CMake library 📚 [here: developer239/robot-cpp](https://github.com/developer239/robot-cpp)
+## Why it exists
 
-**Supported system:**
+Input automation libraries in the [robotjs](https://github.com/octalmage/robotjs) lineage collapse distinctions that matter:
 
-- MacOS
-- Windows **(not tested yet)**
+- Physical keys are separate from text. A key is identified by its keyboard position. Text injects Unicode directly and is layout-independent.
+- Logical coordinates are separate from device pixels. Cursor coordinates and capture dimensions never silently disagree on Retina and DPI-scaled monitors.
+- Failures are typed errors, not silent no-ops. Every fallible operation rejects with a `RobotError` carrying a structured `code`.
+- There is no global state. Everything hangs off an explicit `Session`, so native lifetimes are clear.
 
-In case of Linux, please, create issue and leave a star ⭐ and I will implement support. Right now I want to focus on port to
-Node.js using Node-API.
+## Supported platforms
 
-### Known issues:
+| Platform | Backend | Injection | Capture | Recording |
+| --- | --- | --- | --- | --- |
+| macOS | Quartz (CoreGraphics) | yes, needs Accessibility | yes, needs Screen Recording | yes, needs Accessibility |
+| Windows | SendInput + GDI | yes | yes | yes |
+| Linux (X11) | XTest + XRandR + XRecord | yes | yes | yes |
+| Linux (Wayland) | uinput, opt-in | keyboard + relative mouse only | no | no |
 
-- Work in progress. If you need specific features, please, create an issue and I will prioritize it.
-- I never tested this on Windows. 🙏
-- It seems that special keys bindings are not implemented correctly.
-- Upper case is converted to lower case when typing. (it will be possible to use shift key when special keys are fixed though)
-- It seems that screen bindings are not implemented correctly.
+Prebuilt binaries ship for macOS, Windows, and Linux on Node 18, 20, and 22.
 
-## Installation:
+## Requirements
 
-Make sure that you can build C++ projects on your machine and that you have [CMake](https://cmake.org) installed.
+- Node.js 18.17 or newer.
+- No build toolchain when a prebuilt binary matches your platform and Node ABI.
+- Source builds need CMake 3.24+ and a C++23 compiler: Apple Clang 17+ on macOS, current MSVC on Windows, or GCC 14+ on Linux. Linux source builds also need `libx11-dev`, `libxtst-dev`, and `libxrandr-dev`.
 
-- On MacOS: `brew install cmake`
-- On Windows: `choco install cmake`
+## Installation
 
-Install Node dependencies:
-
-```shell
-yarn add robot-ts
+```bash
+npm install robot-ts
 ```
 
-## Keyboard ⌨️
-
-The `Keyboard` class provides a interface for simulating keyboard key presses, releases, and typing.
-
-### Public Methods
-
-- `type(query: string): void`
-  Types the given text as a string.
-
-- `typeHumanLike(query: string): void`
-  Types the given text as a string with a human-like typing speed.
-
-- `click(asciiChar: string): void`
-  Simulates a key press and release for the specified ASCII character.
-
-- `click(specialKey: SpecialKey): void`
-  Simulates a key press and release for the specified special key.
-
-- `press(asciiChar: string): void`
-  Simulates a key press for the specified ASCII character.
-
-- `press(specialKey: SpecialKey): void`
-  Simulates a key press for the specified special key.
-
-- `release(asciiChar: string): void`
-  Simulates a key release for the specified ASCII character.
-
-- `release(specialKey: SpecialKey): void`
-  Simulates a key release for the specified special key.
-
-### Example Usage
+## Quick start
 
 ```typescript
-import { Keyboard } from "robot-ts";
+import { Session } from 'robot-ts'
 
-Keyboard.typeHumanLike("hello, world");
+const session = await Session.create()
+
+try {
+  await session.mouse.moveSmooth({ x: 400, y: 300 })
+  await session.keyboard.typeText('Hello, 世界!')
+} finally {
+  await session.dispose()
+}
 ```
 
-## Mouse 🖱️
-
-The `Mouse` class provides a interface for controlling the mouse cursor, simulating mouse clicks, and scrolling.
-
-### Public Methods
-
-- `move(point: Point): void`
-  Moves the mouse cursor to the specified point (x, y).
-
-- `moveSmooth(point: Point, speed?: number): void`
-  Moves the mouse cursor smoothly to the specified point (x, y) at the given speed.
-
-- `drag(point: Point, speed?: number): void`
-  Drags the mouse cursor to the specified point (x, y) at the given speed.
-
-- `getPosition(): Point`
-  Returns the current position of the mouse cursor as a `Point`.
-
-- `toggleButton(down: boolean, button: MouseButton, doubleClick?: boolean): void`
-  Presses or releases the specified mouse button depending on the `down` argument. If `doubleClick` is set to true, it will perform a double click.
-
-- `click(button: MouseButton): void`
-  Simulates a single click using the specified mouse button.
-
-- `doubleClick(button: MouseButton): void`
-  Simulates a double click using the specified mouse button.
-
-- `scrollBy(y: number, x?: number): void`
-  Scrolls the mouse wheel by the specified x and y distances.
-
-### Example Usage
+`Session` holds native resources, so dispose it when finished.
 
 ```typescript
-import { Mouse } from "robot-ts";
+import { Session } from 'robot-ts'
 
-Mouse.moveSmooth({ x: 100, y: 200 });
+await using session = await Session.create()
+await session.keyboard.typeText('disposed automatically at end of scope')
 ```
 
-## Screen 🖥️
+## Core concepts
 
-The `Screen` class provides functionality to capture the screen, get pixel colors, and save the captured screen as a PNG image.
+### A session owns the backend
 
-### Public Methods
+All state lives on a `Session`. `Session.create()` loads the native addon, selects a backend, checks requested permissions, and resolves to a fully formed session or rejects with a `RobotError`. The session exposes `keyboard`, `mouse`, `screen`, `eventTap`, and a `capabilities` report.
 
-- `getPixelColor(x: number, y: number): Pixel`
-  Returns the color of the pixel at the specified (x, y) coordinates as a `Pixel` structure.
+### Physical keys versus text
 
-- `getScreenSize(): DisplaySize`
-  Returns the size of the screen as a `DisplaySize` structure containing the width and height.
+- A `Key` names a physical key by position. Use physical keys for shortcuts, chords, and games.
+- Text (`typeText`, `typeChar`) injects Unicode directly and is layout-independent. Use it for specific characters, symbols, accents, CJK text, and emoji.
 
-- `capture(x?: number, y?: number, width?: number, height?: number): void`
-  Captures a rectangular area of the screen defined by the specified (x, y) coordinates and dimensions (width, height).
+### Logical versus physical coordinates
 
-- `getPixels(): Pixel[]`
-  Returns an array of `Pixel` structures representing the captured screen.
+- Logical coordinates are DPI-independent desktop units. Cursor movement and position operate here.
+- Physical coordinates are device pixels. Screen capture and pixel access operate here.
 
-- `saveAsPNG(filename: string): void`
-  Saves the captured screen as a PNG image with the specified filename.
+Each `Monitor` carries its own `scaleFactor`, logical bounds, and physical bounds.
 
-### Example Usage
+## Keyboard
 
 ```typescript
-import { Screen } from "robot-ts";
+import { Key, Modifier, Session } from 'robot-ts'
 
-const screen = new Screen();
-screen.capture(0, 0, 800, 600);
-const pixel = screen.getPixelColor(100, 200);
-screen.saveAsPNG("screenshot.png");
+const session = await Session.create()
+
+await session.keyboard.typeText('café 日本語')
+await session.keyboard.typeTextHumanLike('dear reviewer,')
+await session.keyboard.tap(Key.Enter)
+await session.keyboard.tap(Key.C, Modifier.Control)
+await session.keyboard.tap(Key.S, [Modifier.Control, Modifier.Shift])
+await session.keyboard.press(Key.W)
+await session.keyboard.release(Key.W)
 ```
+
+## Mouse
+
+Mouse control operates in global logical coordinates.
+
+```typescript
+import { MouseButton, pixels, lines, Session } from 'robot-ts'
+
+const session = await Session.create()
+
+await session.mouse.move({ x: 800, y: 450 })
+await session.mouse.moveSmooth({ x: 100, y: 100 })
+await session.mouse.click()
+await session.mouse.click(MouseButton.Right)
+await session.mouse.doubleClick()
+await session.mouse.drag({ x: 500, y: 500 })
+await session.mouse.scroll(lines(3))
+await session.mouse.scroll(pixels(-120))
+
+const position = await session.mouse.position()
+```
+
+## Screen
+
+Capture regions are specified in device pixels.
+
+```typescript
+import { Session } from 'robot-ts'
+
+const session = await Session.create()
+const monitors = await session.screen.monitors()
+const primary = await session.screen.primaryMonitor()
+const image = await session.screen.captureMonitor(primary.id)
+
+await image.savePng('primary.png')
+
+const buffer = image.toBuffer()
+const color = await session.screen.pixel({ x: 100, y: 200 })
+```
+
+`Image` keeps pixels in native memory. `savePng` encodes natively, `toBuffer` copies RGBA bytes once, and `at(x, y)` reads one pixel.
+
+## Recording and replay
+
+```typescript
+import { Recorder, Session } from 'robot-ts'
+
+const session = await Session.create()
+
+if (!session.capabilities.canRecordEvents) {
+  throw new Error('Global recording is not available on this backend')
+}
+
+const recorder = new Recorder()
+await recorder.attach(session.eventTap)
+
+await new Promise((resolve) => setTimeout(resolve, 5000))
+await session.eventTap.stop()
+
+const json = recorder.toJSON()
+const restored = Recorder.fromJSON(json)
+await restored.replay(session)
+await session.dispose()
+```
+
+## Errors
+
+Every failure is a `RobotError` with a structured `code` from `ErrorCode`: `Unsupported`, `PermissionDenied`, `BackendUnavailable`, `InvalidArgument`, `MonitorNotFound`, `UnmappableInput`, `CaptureFailed`, `EncodeFailed`, `IoError`, or `PlatformError`.
+
+```typescript
+import { ErrorCode, RobotError, Session } from 'robot-ts'
+
+const session = await Session.create()
+
+try {
+  await session.mouse.move({ x: 100, y: 100 })
+} catch (error) {
+  if (RobotError.is(error) && error.code === ErrorCode.Unsupported) {
+    // Cursor warping may be unsupported under native Wayland.
+  }
+}
+```
+
+## Platform limitations
+
+### macOS
+
+Injection and global recording require Accessibility permission. Screen capture requires Screen Recording permission.
+
+```typescript
+const session = await Session.create({
+  requireInputPermission: true,
+  requireCapturePermission: true,
+})
+```
+
+### Windows
+
+No runtime permission is required for injection or capture from an interactive desktop session. Injection into a higher-integrity window can be blocked by the OS and rejects as a platform error.
+
+### Linux
+
+Under X11 the library supports injection, capture, and recording. Under native Wayland, unprivileged clients cannot inject input, warp or read the cursor, or capture the screen. The uinput backend can inject keyboard and relative pointer motion when `/dev/uinput` access is granted.
+
+```typescript
+import { LinuxBackend, Session } from 'robot-ts'
+
+const session = await Session.create({ linuxBackend: LinuxBackend.Uinput })
+```
+
+## Building from source
+
+```bash
+git clone --recurse-submodules https://github.com/developer239/robot-ts.git
+cd robot-ts
+npm install
+npm run build
+npm test
+```
+
+The native addon links the vendored `robot-cpp` submodule under `native/vendor/robot-cpp`.
+
+## License
+
+MIT. See [LICENSE](./LICENSE).

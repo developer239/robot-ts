@@ -1,0 +1,6 @@
+native/vendor/robot-cpp/build/
+native/vendor/robot-cpp/cmake-build-debug/
+native/vendor/robot-cpp/tests/
+native/vendor/robot-cpp/examples/
+native/vendor/robot-cpp/.github/
+native/build/
