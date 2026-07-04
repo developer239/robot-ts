@@ -5,3 +5,7 @@
 /cpp/cmake-build-debug/
 
 /node_modules/
+
+/tmp
+/AGENTS.md
+/.opencode
