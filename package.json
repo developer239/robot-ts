@@ -7,6 +7,7 @@
     "type": "git",
     "url": "https://github.com/developer239/robot-ts.git"
   },
+  "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=18.17.0"
   },
@@ -35,10 +36,10 @@
     "build:native": "cmake-js compile --directory native --out native/build --config Release",
     "build:native:debug": "cmake-js compile --directory native --out native/build --config Debug",
     "build:ts": "tsc --project tsconfig.build.json",
-    "build": "npm run build:native && npm run build:ts",
+    "build": "pnpm run build:native && pnpm run build:ts",
     "clean": "cmake-js clean --directory native --out native/build && rimraf dist",
-    "rebuild": "npm run clean && npm run build",
-    "prepack": "npm run build",
+    "rebuild": "pnpm run clean && pnpm run build",
+    "prepack": "pnpm run build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "vitest run --dir test/unit",

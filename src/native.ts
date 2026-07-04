@@ -78,7 +78,7 @@ export function loadNativeBinding(): NativeBinding {
 
   throw new RobotError(
     ErrorCode.BackendUnavailable,
-    'Could not load the robot-ts native addon. Build it with `npm run build:native`, or install a package that ships a prebuilt binary for your platform. Attempts:\n' +
+    'Could not load the robot-ts native addon. Build it with `pnpm run build:native`, or install a package that ships a prebuilt binary for your platform. Attempts:\n' +
       errors.map((error) => `  - ${error}`).join('\n'),
   )
 }

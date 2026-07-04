@@ -34,7 +34,7 @@ Prebuilt binaries ship for macOS, Windows, and Linux on Node 18, 20, and 22.
 ## Installation
 
 ```bash
-npm install robot-ts
+pnpm add robot-ts
 ```
 
 ## Quick start
@@ -209,9 +209,9 @@ const session = await Session.create({ linuxBackend: LinuxBackend.Uinput })
 ```bash
 git clone --recurse-submodules https://github.com/developer239/robot-ts.git
 cd robot-ts
-npm install
-npm run build
-npm test
+pnpm install
+pnpm run build
+pnpm test
 ```
 
 The native addon links the vendored `robot-cpp` submodule under `native/vendor/robot-cpp`.
