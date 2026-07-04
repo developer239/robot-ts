@@ -23,21 +23,17 @@ const HUMAN_DEFAULTS: Required<HumanTypingOptions> = {
 export class Keyboard {
   public constructor(private readonly native: NativeSession) {}
 
-  public press(key: Key): Promise<void> {
+  public async press(key: Key): Promise<void> {
     this.assertKey(key)
     runNative(() => this.native.keyDown(key))
-
-    return Promise.resolve()
   }
 
-  public release(key: Key): Promise<void> {
+  public async release(key: Key): Promise<void> {
     this.assertKey(key)
     runNative(() => this.native.keyUp(key))
-
-    return Promise.resolve()
   }
 
-  public tap(key: Key, modifiers?: ModifierInput): Promise<void> {
+  public async tap(key: Key, modifiers?: ModifierInput): Promise<void> {
     this.assertKey(key)
     const order = normalizeModifiers(modifiers)
     const pressed: Key[] = []
@@ -61,27 +57,22 @@ export class Keyboard {
       }
     }
 
-    return Promise.resolve()
   }
 
-  public typeChar(codepoint: number): Promise<void> {
+  public async typeChar(codepoint: number): Promise<void> {
     if (!Number.isInteger(codepoint) || !isScalarValue(codepoint)) {
       throw new RobotError(ErrorCode.InvalidArgument, `Not a valid Unicode scalar value: ${codepoint}`)
     }
 
     runNative(() => this.native.typeChar(codepoint))
-
-    return Promise.resolve()
   }
 
-  public typeText(text: string): Promise<void> {
+  public async typeText(text: string): Promise<void> {
     if (text.length === 0) {
-      return Promise.resolve()
+      return
     }
 
     runNative(() => this.native.typeText(text))
-
-    return Promise.resolve()
   }
 
   public async typeTextHumanLike(text: string, options: HumanTypingOptions = {}): Promise<void> {

@@ -18,10 +18,8 @@ export class Image {
     return { width: this.width, height: this.height }
   }
 
-  public savePng(path: string): Promise<void> {
+  public async savePng(path: string): Promise<void> {
     runNative(() => this.native.savePng(path))
-
-    return Promise.resolve()
   }
 
   public toBuffer(): Buffer {

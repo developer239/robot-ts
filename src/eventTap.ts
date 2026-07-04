@@ -18,7 +18,7 @@ export class EventTap {
     return this.running && runNative(() => this.native.isEventTapRunning())
   }
 
-  public start(sink: EventSink): Promise<void> {
+  public async start(sink: EventSink): Promise<void> {
     if (this.running) {
       throw new RobotError(ErrorCode.Unsupported, 'An event tap is already running on this session')
     }
@@ -26,19 +26,15 @@ export class EventTap {
     this.sink = sink
     runNative(() => this.native.startEventTap((event) => this.sink?.(event)))
     this.running = true
-
-    return Promise.resolve()
   }
 
-  public stop(): Promise<void> {
+  public async stop(): Promise<void> {
     if (!this.running) {
-      return Promise.resolve()
+      return
     }
 
     this.running = false
     this.sink = undefined
     runNative(() => this.native.stopEventTap())
-
-    return Promise.resolve()
   }
 }

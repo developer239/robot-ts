@@ -60,7 +60,6 @@ Napi::Object scrollDeltaToJs(Napi::Env env, const robot::ScrollDelta& delta) {
 void throwRobotError(Napi::Env env, const robot::Error& error) {
   Napi::Error jsError = Napi::Error::New(env, error.message);
   jsError.Set("code", Napi::String::New(env, std::string(robot::toString(error.code))));
-  jsError.ThrowAsJavaScriptException();
   throw jsError;
 }
 

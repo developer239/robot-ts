@@ -8,13 +8,13 @@ import type { Rgba } from './pixel'
 export class Screen {
   public constructor(private readonly native: NativeSession) {}
 
-  public monitors(): Promise<Monitor[]> {
+  public async monitors(): Promise<Monitor[]> {
     const list = runNative(() => this.native.enumerateMonitors())
 
-    return Promise.resolve([...list].sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary)))
+    return [...list].sort((a, b) => Number(b.isPrimary) - Number(a.isPrimary))
   }
 
-  public primaryMonitor(): Promise<Monitor> {
+  public async primaryMonitor(): Promise<Monitor> {
     const list = runNative(() => this.native.enumerateMonitors())
 
     if (list.length === 0) {
@@ -23,10 +23,10 @@ export class Screen {
 
     const primary = list.find((monitor) => monitor.isPrimary)
 
-    return Promise.resolve(primary ?? list[0]!)
+    return primary ?? list[0]!
   }
 
-  public virtualBounds(): Promise<PhysicalRect> {
+  public async virtualBounds(): Promise<PhysicalRect> {
     const list = runNative(() => this.native.enumerateMonitors())
 
     if (list.length === 0) {
@@ -45,13 +45,13 @@ export class Screen {
       maxY = Math.max(maxY, bounds.origin.y + bounds.size.height)
     }
 
-    return Promise.resolve({
+    return {
       origin: { x: minX, y: minY },
       size: { width: maxX - minX, height: maxY - minY },
-    })
+    }
   }
 
-  public capture(region: PhysicalRect): Promise<Image> {
+  public async capture(region: PhysicalRect): Promise<Image> {
     if (region.size.width <= 0 || region.size.height <= 0) {
       throw new RobotError(ErrorCode.InvalidArgument, 'Capture region must have positive size')
     }
@@ -60,7 +60,7 @@ export class Screen {
       this.native.captureRegion(region.origin.x, region.origin.y, region.size.width, region.size.height),
     )
 
-    return Promise.resolve(new Image(native))
+    return new Image(native)
   }
 
   public async captureMonitor(monitorId: number): Promise<Image> {
@@ -74,7 +74,7 @@ export class Screen {
     return this.capture(monitor.physicalBounds)
   }
 
-  public pixel(point: PhysicalPoint): Promise<Rgba> {
-    return Promise.resolve(runNative(() => this.native.pixel(point.x, point.y)))
+  public async pixel(point: PhysicalPoint): Promise<Rgba> {
+    return runNative(() => this.native.pixel(point.x, point.y))
   }
 }

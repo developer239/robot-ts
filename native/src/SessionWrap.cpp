@@ -7,7 +7,9 @@
 
 #include "Conversions.h"
 #include "ImageWrap.h"
+#include "robot/Error.h"
 #include "robot/Key.h"
+#include "robot/Mouse.h"
 #include "robot/MouseButton.h"
 #include "robot/Scroll.h"
 
@@ -152,20 +154,9 @@ Napi::Value SessionWrap::Button(const Napi::CallbackInfo& info) {
   const auto button = static_cast<robot::MouseButton>(info[0].ToNumber().Uint32Value());
   const bool down = info[1].ToBoolean().Value();
   const int clickCount = info[2].ToNumber().Int32Value();
+  const robot::ButtonAction action = down ? robot::ButtonAction::Down : robot::ButtonAction::Up;
 
-  if (down && clickCount >= 2) {
-    unwrapVoid(env, session(env).mouse().doubleClick(button));
-    return env.Undefined();
-  }
-  if (!down && clickCount >= 2) {
-    return env.Undefined();
-  }
-  if (down) {
-    unwrapVoid(env, session(env).mouse().press(button));
-    return env.Undefined();
-  }
-
-  unwrapVoid(env, session(env).mouse().release(button));
+  unwrapVoid(env, session(env).mouse().button(button, action, clickCount));
   return env.Undefined();
 }
 
@@ -222,9 +213,18 @@ Napi::Value SessionWrap::StartEventTap(const Napi::CallbackInfo& info) {
     Napi::Error::New(env, "Event tap already running").ThrowAsJavaScriptException();
     return env.Undefined();
   }
+  if (tapThread_.joinable()) {
+    tapThread_.join();
+  }
   if (info.Length() < 1 || !info[0].IsFunction()) {
     Napi::TypeError::New(env, "startEventTap(onEvent: function) expected")
         .ThrowAsJavaScriptException();
+    return env.Undefined();
+  }
+
+  robot::EventTap& tap = session(env).eventTap();
+  if (!tap.isSupported()) {
+    throwRobotError(env, robot::Error::unsupported("event tap"));
     return env.Undefined();
   }
 
@@ -232,9 +232,8 @@ Napi::Value SessionWrap::StartEventTap(const Napi::CallbackInfo& info) {
       env, info[0].As<Napi::Function>(), "robot-ts-eventtap", 0, 1
   );
   tapRunning_.store(true);
-  robot::EventTap& tap = session(env).eventTap();
   tapThread_ = std::thread([this, &tap] {
-    auto result = tap.start([this](const robot::InputEvent& event) {
+    const auto result = tap.start([this](const robot::InputEvent& event) {
       auto* copy = new robot::InputEvent(event);
       tapTsfn_.BlockingCall(
           copy,

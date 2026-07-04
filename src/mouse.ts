@@ -18,10 +18,8 @@ const DRAG_SETTLE_MS = 10
 export class Mouse {
   public constructor(private readonly native: NativeSession) {}
 
-  public move(point: LogicalPoint): Promise<void> {
+  public async move(point: LogicalPoint): Promise<void> {
     runNative(() => this.native.warpCursor(point.x, point.y))
-
-    return Promise.resolve()
   }
 
   public async moveSmooth(point: LogicalPoint, options: MouseMoveOptions = {}): Promise<void> {
@@ -43,40 +41,34 @@ export class Mouse {
     }
   }
 
-  public position(): Promise<LogicalPoint> {
-    return Promise.resolve(runNative(() => this.native.cursorPosition()))
+  public async position(): Promise<LogicalPoint> {
+    return runNative(() => this.native.cursorPosition())
   }
 
-  public press(button: MouseButton = MouseButton.Left): Promise<void> {
+  public async press(button: MouseButton = MouseButton.Left): Promise<void> {
     this.assertButton(button)
     runNative(() => this.native.button(button, true, 1))
-
-    return Promise.resolve()
   }
 
-  public release(button: MouseButton = MouseButton.Left): Promise<void> {
+  public async release(button: MouseButton = MouseButton.Left): Promise<void> {
     this.assertButton(button)
     runNative(() => this.native.button(button, false, 1))
-
-    return Promise.resolve()
   }
 
-  public click(button: MouseButton = MouseButton.Left): Promise<void> {
+  public async click(button: MouseButton = MouseButton.Left): Promise<void> {
     this.assertButton(button)
     runNative(() => this.native.button(button, true, 1))
     runNative(() => this.native.button(button, false, 1))
 
-    return Promise.resolve()
   }
 
-  public doubleClick(button: MouseButton = MouseButton.Left): Promise<void> {
+  public async doubleClick(button: MouseButton = MouseButton.Left): Promise<void> {
     this.assertButton(button)
     runNative(() => this.native.button(button, true, 1))
     runNative(() => this.native.button(button, false, 1))
     runNative(() => this.native.button(button, true, 2))
     runNative(() => this.native.button(button, false, 2))
 
-    return Promise.resolve()
   }
 
   public async drag(to: LogicalPoint, button: MouseButton = MouseButton.Left): Promise<void> {
@@ -109,10 +101,8 @@ export class Mouse {
     }
   }
 
-  public scroll(delta: ScrollDelta): Promise<void> {
+  public async scroll(delta: ScrollDelta): Promise<void> {
     runNative(() => this.native.scroll(delta.horizontal, delta.vertical, delta.unit))
-
-    return Promise.resolve()
   }
 
   private assertButton(button: MouseButton): void {

@@ -14,6 +14,15 @@ Input automation libraries in the [robotjs](https://github.com/octalmage/robotjs
 - Failures are typed errors, not silent no-ops. Every fallible operation rejects with a `RobotError` carrying a structured `code`.
 - There is no global state. Everything hangs off an explicit `Session`, so native lifetimes are clear.
 
+## What it does
+
+- Move the cursor, interpolate motion, click, double-click, drag, and scroll.
+- Press and release physical keys by position, build modifier chords, and type arbitrary Unicode text independent of the active keyboard layout.
+- Enumerate displays with per-monitor scale factors and logical/physical bounds.
+- Capture monitors or regions at native pixel resolution, sample pixels, and encode captures as PNG.
+- Record global mouse and keyboard input and replay the captured timeline.
+- Report per-environment capabilities so callers can branch on what is actually available.
+
 ## Supported platforms
 
 | Platform | Backend | Injection | Capture | Recording |
@@ -52,7 +61,7 @@ try {
 }
 ```
 
-`Session` holds native resources, so dispose it when finished.
+`Session` holds native resources, so dispose it when finished. On Node 20+ you can let the runtime do that with `await using`:
 
 ```typescript
 import { Session } from 'robot-ts'
@@ -72,12 +81,16 @@ All state lives on a `Session`. `Session.create()` loads the native addon, selec
 - A `Key` names a physical key by position. Use physical keys for shortcuts, chords, and games.
 - Text (`typeText`, `typeChar`) injects Unicode directly and is layout-independent. Use it for specific characters, symbols, accents, CJK text, and emoji.
 
+Modifier semantics differ per platform and the library does not remap them: `Modifier.Meta` is Command on macOS and the Super/Windows key on Windows and Linux, and `Modifier.Alt` is Option on macOS. A cross-platform "select all" is `Meta+A` on macOS and `Control+A` on Windows and Linux.
+
 ### Logical versus physical coordinates
 
 - Logical coordinates are DPI-independent desktop units. Cursor movement and position operate here.
 - Physical coordinates are device pixels. Screen capture and pixel access operate here.
 
 Each `Monitor` carries its own `scaleFactor`, logical bounds, and physical bounds.
+
+TypeScript is structurally typed, so `LogicalPoint` and `PhysicalPoint` have the same shape and the compiler will not stop you passing one where the other is expected. The names document the intended coordinate space; correctness rests on calling the right method.
 
 ## Keyboard
 
@@ -109,12 +122,15 @@ await session.mouse.moveSmooth({ x: 100, y: 100 })
 await session.mouse.click()
 await session.mouse.click(MouseButton.Right)
 await session.mouse.doubleClick()
+await session.mouse.click(MouseButton.X1) // needs capabilities.supportsExtraMouseButtons
 await session.mouse.drag({ x: 500, y: 500 })
 await session.mouse.scroll(lines(3))
-await session.mouse.scroll(pixels(-120))
+await session.mouse.scroll(pixels(-120)) // needs capabilities.supportsHighResolutionScroll
 
 const position = await session.mouse.position()
 ```
+
+Scroll sign convention, applied before any operating-system natural scrolling setting: `vertical > 0` scrolls up, `vertical < 0` scrolls down, `horizontal > 0` scrolls right, and `horizontal < 0` scrolls left. Natural scrolling may invert the visible direction; that is a user preference the library does not hide.
 
 ## Screen
 

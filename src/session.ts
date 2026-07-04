@@ -5,6 +5,14 @@ import { Mouse } from './mouse'
 import { loadNativeBinding, runNative, type NativeBinding, type NativeSession } from './native'
 import { Screen } from './screen'
 
+if (typeof (Symbol as { asyncDispose?: symbol }).asyncDispose === 'undefined') {
+  Object.defineProperty(Symbol, 'asyncDispose', {
+    value: Symbol.for('nodejs.asyncDispose'),
+    configurable: false,
+    writable: false,
+  })
+}
+
 export enum LinuxBackend {
   Auto = 0,
   X11 = 1,
@@ -35,7 +43,7 @@ export class Session {
     this.eventTap = new EventTap(native)
   }
 
-  public static create(options: SessionOptions = {}): Promise<Session> {
+  public static async create(options: SessionOptions = {}): Promise<Session> {
     const binding = options.binding ?? loadNativeBinding()
     const native = runNative(() =>
       binding.createSession({
@@ -45,22 +53,20 @@ export class Session {
       }),
     )
 
-    return Promise.resolve(new Session(native))
+    return new Session(native)
   }
 
   public get isDisposed(): boolean {
     return this.disposed
   }
 
-  public dispose(): Promise<void> {
+  public async dispose(): Promise<void> {
     if (this.disposed) {
-      return Promise.resolve()
+      return
     }
 
     this.disposed = true
     runNative(() => this.native.dispose())
-
-    return Promise.resolve()
   }
 
   public async [Symbol.asyncDispose](): Promise<void> {
