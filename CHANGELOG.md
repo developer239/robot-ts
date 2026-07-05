@@ -1,3 +1,22 @@
+# [2.0.0](https://github.com/developer239/robot-ts/compare/v1.0.2...v2.0.0) (2026-07-05)
+
+
+### Bug Fixes
+
+* address native facade review findings ([a14661f](https://github.com/developer239/robot-ts/commit/a14661f2f4632f4e83a065a149d3e92b78d4dc02))
+* place windows native addon at expected path ([1d9dfb1](https://github.com/developer239/robot-ts/commit/1d9dfb1aad04113642cd0beabd8dcf4fb9df188b))
+* update robot-cpp submodule ([2012c08](https://github.com/developer239/robot-ts/commit/2012c0801c837034b950f05e990752a077d718e9))
+
+
+### Features
+
+* restructure native automation package ([331f5da](https://github.com/developer239/robot-ts/commit/331f5da8af4e1afb28e83940fafefa4b6c36dbad))
+
+
+### BREAKING CHANGES
+
+* replace the legacy static API with the Session-based async API and native prebuild package layout.
+
 ## [1.0.2](https://github.com/developer239/robot-ts/compare/v1.0.1...v1.0.2) (2023-04-28)
 
 
