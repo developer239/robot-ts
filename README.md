@@ -1,7 +1,10 @@
 # robot-ts
 
 [![npm version](https://img.shields.io/npm/v/robot-ts.svg?style=flat)](https://www.npmjs.com/package/robot-ts)
+[![npm downloads](https://img.shields.io/npm/dm/robot-ts.svg?style=flat)](https://www.npmjs.com/package/robot-ts)
 [![CI](https://github.com/developer239/robot-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/developer239/robot-ts/actions/workflows/ci.yml)
+[![Prebuilds](https://github.com/developer239/robot-ts/actions/workflows/prebuild.yml/badge.svg)](https://github.com/developer239/robot-ts/actions/workflows/prebuild.yml)
+[![license](https://img.shields.io/npm/l/robot-ts.svg?style=flat)](https://github.com/developer239/robot-ts/blob/master/LICENSE)
 
 robot-ts is a Node.js library for programmatic keyboard, mouse, and screen control on macOS, Windows, and Linux. It is a typed async binding over [robot-cpp](https://github.com/developer239/robot-cpp) with input injection, native-resolution screen capture, global input recording, explicit capabilities, and typed errors.
 
