@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/developer239/robot-ts/compare/v2.0.0...v2.0.1) (2026-07-05)
+
+
+### Bug Fixes
+
+* avoid native rebuild during publish ([70a4c1d](https://github.com/developer239/robot-ts/commit/70a4c1dd1aa7880dcfb26977d88629ff2448651e))
+
 # [2.0.0](https://github.com/developer239/robot-ts/compare/v1.0.2...v2.0.0) (2026-07-05)
 
 

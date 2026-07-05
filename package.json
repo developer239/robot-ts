@@ -1,6 +1,6 @@
 {
   "name": "robot-ts",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Cross-platform keyboard, mouse, and screen automation for Node.js, with a physical-key vs text model, per-monitor DPI-aware capture, and explicit capability reporting.",
   "license": "MIT",
   "repository": {
