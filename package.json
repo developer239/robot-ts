@@ -39,7 +39,7 @@
     "build": "pnpm run build:native && pnpm run build:ts",
     "clean": "cmake-js clean --directory native --out native/build && rimraf dist",
     "rebuild": "pnpm run clean && pnpm run build",
-    "prepack": "pnpm run build",
+    "prepack": "pnpm run build:ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "vitest run --dir test/unit",
