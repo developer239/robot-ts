@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/developer239/robot-ts/compare/v2.0.1...v2.0.2) (2026-10-10)
+
+
+### Bug Fixes
+
+* load the N-API prebuild on every Node release ([42ae111](https://github.com/developer239/robot-ts/commit/42ae111c46e59d6f1f386380a50293bc467501dc))
+
 ## [2.0.1](https://github.com/developer239/robot-ts/compare/v2.0.0...v2.0.1) (2026-07-05)
 
 
