@@ -56,7 +56,7 @@ export const runNative = <TResult>(operation: () => TResult): TResult => {
 export function loadNativeBinding(): NativeBinding {
   const packageRoot = path.resolve(__dirname, '..')
   const candidates = [
-    path.join(packageRoot, 'prebuilds', abiTag(), 'robot_ts_native.node'),
+    path.join(packageRoot, 'prebuilds', prebuildTag(), 'robot_ts_native.node'),
     path.join(packageRoot, 'native', 'build', 'Release', 'robot_ts_native.node'),
     path.join(packageRoot, 'native', 'build', 'Debug', 'robot_ts_native.node'),
   ]
@@ -83,4 +83,5 @@ export function loadNativeBinding(): NativeBinding {
   )
 }
 
-const abiTag = (): string => `${process.platform}-${process.arch}-napi-abi${process.versions.modules}`
+// The addon targets N-API 8, so one build per platform and architecture loads in every Node and Bun release.
+const prebuildTag = (): string => `${process.platform}-${process.arch}`
