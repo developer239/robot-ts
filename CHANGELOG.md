@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/developer239/robot-ts/compare/v2.0.2...v2.0.3) (2026-10-10)
+
+
+### Bug Fixes
+
+* type text without a modifier held over from a shortcut on macOS ([8b236fd](https://github.com/developer239/robot-ts/commit/8b236fdafcba9aaf170458a53ff2c44b5fb6d601))
+
 ## [2.0.2](https://github.com/developer239/robot-ts/compare/v2.0.1...v2.0.2) (2026-10-10)
 
 
