@@ -78,6 +78,105 @@ describe('facades', () => {
     expect(binding.session.calls).toContainEqual({ method: 'button', args: [MouseButton.Left, false, 1] })
   })
 
+  it.each([
+    [{ steps: 1.5 }],
+    [{ steps: -1 }],
+    [{ steps: Number.POSITIVE_INFINITY }],
+    [{ durationMs: -1 }],
+    [{ holdMs: Number.NaN }],
+    [{ dwellMs: Number.POSITIVE_INFINITY }],
+  ])('rejects drag options %j before pressing the button', async (options) => {
+    const binding = new MockNativeBinding()
+    const session = await Session.create({ binding })
+
+    await expect(session.mouse.dragSmooth({ x: 10, y: 20 }, MouseButton.Left, options)).rejects.toMatchObject({
+      code: ErrorCode.InvalidArgument,
+    })
+
+    expect(binding.session.calls.filter(({ method }) => method === 'button')).toEqual([])
+  })
+
+  it('rejects a drag target without finite coordinates before pressing the button', async () => {
+    const binding = new MockNativeBinding()
+    const session = await Session.create({ binding })
+
+    await expect(session.mouse.drag({ x: Number.NaN, y: 20 })).rejects.toMatchObject({
+      code: ErrorCode.InvalidArgument,
+    })
+
+    expect(binding.session.calls.filter(({ method }) => method === 'button')).toEqual([])
+  })
+
+  it('moves in exactly the requested number of steps, ending on the target', async () => {
+    const binding = new MockNativeBinding()
+    const session = await Session.create({ binding })
+
+    await session.mouse.dragSmooth({ x: 30, y: 40 }, MouseButton.Left, { steps: 3, durationMs: 0, dwellMs: 0 })
+
+    const moves = binding.session.calls.filter(({ method }) => method === 'warpCursor')
+    expect(moves).toHaveLength(3)
+    expect(moves.at(-1)).toEqual({ method: 'warpCursor', args: [30, 40] })
+  })
+
+  it('derives the step count when steps is zero', async () => {
+    const binding = new MockNativeBinding()
+    const session = await Session.create({ binding })
+
+    await session.mouse.moveSmooth({ x: 40, y: 0 }, { steps: 0, durationMs: 0 })
+
+    expect(binding.session.calls.filter(({ method }) => method === 'warpCursor')).toHaveLength(10)
+  })
+
+  it('holds before moving and dwells on the target before releasing', async () => {
+    vi.useFakeTimers()
+    try {
+      const binding = new MockNativeBinding()
+      const session = await Session.create({ binding })
+      const methods = (): string[] =>
+        binding.session.calls.map(({ method }) => method).filter((method) => method === 'button' || method === 'warpCursor')
+
+      const pending = session.mouse.dragSmooth({ x: 30, y: 40 }, MouseButton.Left, {
+        steps: 1,
+        durationMs: 0,
+        holdMs: 500,
+        dwellMs: 300,
+      })
+      await vi.advanceTimersByTimeAsync(499)
+      expect(methods()).toEqual(['button'])
+      await vi.advanceTimersByTimeAsync(1)
+      expect(methods()).toEqual(['button', 'warpCursor'])
+      await vi.advanceTimersByTimeAsync(299)
+      expect(methods()).toEqual(['button', 'warpCursor'])
+      await vi.advanceTimersByTimeAsync(1)
+      await pending
+      expect(methods()).toEqual(['button', 'warpCursor', 'button'])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('drags with the options as they were at the call, whatever changes during the hold', async () => {
+    vi.useFakeTimers()
+    try {
+      const binding = new MockNativeBinding()
+      const session = await Session.create({ binding })
+      const options = { steps: 3, durationMs: 0, holdMs: 50, dwellMs: 0 }
+      const target = { x: 30, y: 40 }
+
+      const pending = session.mouse.dragSmooth(target, MouseButton.Left, options)
+      options.steps = Number.POSITIVE_INFINITY
+      target.x = Number.NaN
+      await vi.advanceTimersByTimeAsync(60)
+      await pending
+
+      const moves = binding.session.calls.filter(({ method }) => method === 'warpCursor')
+      expect(moves).toHaveLength(3)
+      expect(moves.at(-1)).toEqual({ method: 'warpCursor', args: [30, 40] })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('derives screen values from monitor atoms', async () => {
     const binding = new MockNativeBinding()
     binding.session.monitorsResult = [
