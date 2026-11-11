@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/developer239/robot-ts/compare/v2.1.0...v2.1.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* start the input event tap on Linux without an XRecordBadContext error ([9e0c651](https://github.com/developer239/robot-ts/commit/9e0c6513b2d1309317cfd58928b52d9abf6ad7b3))
+
 # [2.1.0](https://github.com/developer239/robot-ts/compare/v2.0.3...v2.1.0) (2026-11-11)
 
 
