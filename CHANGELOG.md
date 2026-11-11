@@ -1,3 +1,15 @@
+# [2.1.0](https://github.com/developer239/robot-ts/compare/v2.0.3...v2.1.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* type, click and drag with real keys and held modifiers on macOS ([8622adc](https://github.com/developer239/robot-ts/commit/8622adc4f0122fde33ee9f7210792057e4cee949))
+
+
+### Features
+
+* add hold and dwell pauses to drags and check gesture options first ([37c1812](https://github.com/developer239/robot-ts/commit/37c1812733247b823d7e8204eb5b8ae2bbcd8b16))
+
 ## [2.0.3](https://github.com/developer239/robot-ts/compare/v2.0.2...v2.0.3) (2026-10-10)
 
 
